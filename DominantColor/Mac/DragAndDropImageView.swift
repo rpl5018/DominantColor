@@ -24,11 +24,15 @@ class DragAndDropImageView: NSImageView {
     
     override func draggingEntered(sender: NSDraggingInfo) -> NSDragOperation {
         let pasteboard = sender.draggingPasteboard()
-        if let data = pasteboard.dataForType(NSTIFFPboardType) {
+        if let _ = pasteboard.dataForType(NSTIFFPboardType) {
             return .Copy
-        } else if let files = pasteboard.propertyListForType(NSFilenamesPboardType) as? [String] {
-            let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, files[0].pathExtension, nil).takeRetainedValue()
-            return (UTTypeConformsTo(UTI, kUTTypeImage) == 1) ? .Copy : .None
+        } else if let files = pasteboard.propertyListForType(NSFilenamesPboardType) as? [String],
+            file = files.first,
+            path = file.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLHostAllowedCharacterSet()),
+            url = NSURL(string: path),
+            ext = url.pathExtension,
+            UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) {
+            return UTTypeConformsTo(UTI.takeRetainedValue(), kUTTypeImage) ? .Copy : .None
         }
         return .None
     }

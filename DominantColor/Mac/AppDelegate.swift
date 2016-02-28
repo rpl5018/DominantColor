@@ -32,13 +32,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, DragAndDropImageViewDelegate
     @IBAction func runBenchmark(sender: NSButton) {
         if let image = image {
             let nValues: [Int] = [100, 1000, 2000, 5000, 10000]
-            let CGImage = image.CGImageForProposedRect(nil, context: nil, hints: nil)!.takeUnretainedValue()
+            let CGImage = image.CGImageForProposedRect(nil, context: nil, hints: nil)!
             for n in nValues {
                 let ns = dispatch_benchmark(5) {
                     dominantColorsInImage(CGImage, maxSampledPixels: n)
                     return
                 }
-                println("n = \(n) averaged \(ns/1000000) ms")
+                print("n = \(n) averaged \(ns/1000000) ms")
             }
         }
     }

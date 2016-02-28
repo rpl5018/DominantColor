@@ -31,7 +31,7 @@ private func ==(lhs: RGBAPixel, rhs: RGBAPixel) -> Bool {
     return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b
 }
 
-private func createRGBAContext(width: Int, height: Int) -> CGContext {
+private func createRGBAContext(width: Int, _ height: Int) -> CGContext {
     return CGBitmapContextCreate(
         nil,
         width,
@@ -39,8 +39,8 @@ private func createRGBAContext(width: Int, height: Int) -> CGContext {
         8,          // bits per component
         width * 4,  // bytes per row
         CGColorSpaceCreateDeviceRGB(),
-        CGBitmapInfo(CGImageAlphaInfo.PremultipliedLast.rawValue)
-    )
+        UInt32(CGImageAlphaInfo.PremultipliedLast.rawValue)
+    )!
 }
 
 // Enumerates over all of the pixels in an RGBA bitmap context
@@ -60,7 +60,7 @@ private func enumerateRGBAContext(context: CGContext, handler: (Int, Int, RGBAPi
 // MARK: Conversions
 
 private func RGBVectorToCGColor(rgbVector: INVector3) -> CGColor {
-    return CGColorCreate(CGColorSpaceCreateDeviceRGB(), [CGFloat(rgbVector.x), CGFloat(rgbVector.y), CGFloat(rgbVector.z), 1.0])
+    return CGColorCreate(CGColorSpaceCreateDeviceRGB(), [CGFloat(rgbVector.x), CGFloat(rgbVector.y), CGFloat(rgbVector.z), 1.0])!
 }
 
 private extension RGBAPixel {
@@ -151,7 +151,7 @@ public func dominantColorsInImage(
     
     // Sort the clusters by size in descending order so that the
     // most dominant colors come first.
-    clusters.sort { $0.size > $1.size }
+    clusters.sortInPlace { $0.size > $1.size }
     
     return clusters.map { RGBVectorToCGColor(IN_LABToRGB($0.centroid)) }
 }
@@ -169,7 +169,7 @@ private func distanceForAccuracy(accuracy: GroupingAccuracy) -> (INVector3, INVe
 
 // Computes the proportionally scaled dimensions such that the
 // total number of pixels does not exceed the specified limit.
-private func scaledDimensionsForPixelLimit(limit: Int, width: Int, height: Int) -> (Int, Int) {
+private func scaledDimensionsForPixelLimit(limit: Int, _ width: Int, _ height: Int) -> (Int, Int) {
     if (width * height > limit) {
         let ratio = Float(width) / Float(height)
         let maxWidth = sqrtf(ratio * Float(limit))
