@@ -26,15 +26,14 @@ class ViewController: UIViewController , UIImagePickerControllerDelegate, UINavi
     }
     
     @IBAction func runBenchmarkTapped(sender: AnyObject) {
-        if let image = image {
+        if let image = image, CGImage = image.CGImage {
             let nValues: [Int] = [100, 1000, 2000, 5000, 10000]
-            let CGImage = image.CGImage
             for n in nValues {
                 let ns = dispatch_benchmark(5) {
                     dominantColorsInImage(CGImage, maxSampledPixels: n)
                     return
                 }
-                println("n = \(n) averaged \(ns/1000000) ms")
+                print("n = \(n) averaged \(ns/1000000) ms")
             }
         }
     }
