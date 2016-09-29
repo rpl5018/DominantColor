@@ -93,14 +93,14 @@ private func randomNumberInRange(range: Range<Int>) -> Int {
     let limit = buckets * interval
     var r = 0
     repeat {
-        r = Int(rand())
+        r = Int(arc4random())
     } while r >= limit
     return range.startIndex + (r / buckets)
 }
 
 private extension Array {
     private func randomValues(seed: UInt32, num: Int) -> [Element] {
-        srand(seed)
+        arc4random()
         
         var indices = [Int]()
         indices.reserveCapacity(num)
